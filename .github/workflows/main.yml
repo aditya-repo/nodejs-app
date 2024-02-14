@@ -22,7 +22,7 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         script: |
           # Change to the server deployment directory
-          cd /var/www
+          cd /var/www/cicd
 
           # Fetch the latest changes from the repository
           git fetch origin main
