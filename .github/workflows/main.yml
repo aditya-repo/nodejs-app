@@ -1,4 +1,4 @@
-name: SSH Deployment
+name: Deploy to Server
 
 on:
   push:
@@ -10,14 +10,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.5.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
+    - name: Setup SSH and deploy to server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        script: |
+          # Change to the server deployment directory
+          cd /var/www
 
-      - name: SSH Deploy
-        run: |
-          ssh user@your-server-ip "cd /var/www && git pull"
+          # Fetch the latest changes from the repository
+          git fetch origin main
+          git reset --hard origin/main
+
+    - name: Notify deployment success
+      run: echo "Deployment successful!"
